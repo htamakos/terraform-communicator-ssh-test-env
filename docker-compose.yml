@@ -1,0 +1,31 @@
+version: "2"
+services:
+  bas:
+    build:
+      context: .
+      args:
+        - SSH_PUB_KEY=${SSH_PUB_KEY}
+    container_name: "bas"
+    ports:
+      - "11022:22"
+  app:
+    build:
+      context: .
+      args:
+        - SSH_PUB_KEY=${SSH_PUB_KEY}
+    container_name: "app"
+  proxy:
+    image: datadog/squid
+    container_name: "proxy"
+    ports:
+      - "23128:3128"
+    volumes:
+      - ./conf/squid.conf:/etc/squid/squid.conf
+  proxy_with_auth:
+    image: datadog/squid
+    container_name: "proxy_with_auth"
+    ports:
+      - "23129:3128"
+    volumes:
+      - ./conf/.htpasswd:/etc/squid/.htpasswd
+      - ./conf/squid_with_auth.conf:/etc/squid/squid.conf
